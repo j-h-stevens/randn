@@ -1,7 +1,13 @@
 [package]
 name = "randn"
 version = "0.1.0"
+authors = ["John Stevens"]
 edition = "2021"
+description = "A package to populate Nalgebra's vector, matrix and vector of matrices with standard normal random variables in parallel."
+repository = "https://github.com/j-h-stevens/randn"
+license = "MIT OR Apache-2.0"
+keywords = ["Nalgebra", "Random Normal", "Vector", "Matrix", "Matrices"]
+categories = ["Data-sicence"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
