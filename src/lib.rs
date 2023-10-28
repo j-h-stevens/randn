@@ -1,3 +1,5 @@
+#![doc = include_str!("../README.md")]
+
 use rand_distr::StandardNormal;
 use rand::{Rng, thread_rng};
 use nalgebra::{DVector, DMatrix};
@@ -11,17 +13,17 @@ fn parallel_randn(size: usize) -> Vec<f64> {
     }).collect()
 }
 
-// Public function for generating random vectors
+/// Generates a random vector of the specified size:
 pub fn randn_vector(size: usize) -> DVector<f64> {
     DVector::from_column_slice(&parallel_randn(size))
 }
 
-// Public function for generating random matrices
+/// Generates a random matrix of the specified rows and columns sizes:
 pub fn randn_matrix(rows: usize, cols: usize) -> DMatrix<f64> {
     DMatrix::from_row_slice(rows, cols, &parallel_randn(rows * cols))
 }
 
-// Public function for generating a list of random matrices
+/// Generates a vector of random matrices of specified rows, columns, and number of simulations:
 pub fn randn_matrices(rows: usize, cols: usize, sims: usize) -> Vec<DMatrix<f64>> {
     (0..sims).into_par_iter().map(|_| randn_matrix(rows, cols)).collect()
 }

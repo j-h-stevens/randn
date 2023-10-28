@@ -16,7 +16,7 @@ This library is built upon a set of Rust crates:
    The library uses parallel processing to generate random numbers faster:
    ```rust
    fn parallel_randn(size: usize) -> Vec<f64> {...}
-
+   ```
 2. **Random Vector Generation**
 
    Generates a random vector of the specified size:
@@ -26,14 +26,14 @@ This library is built upon a set of Rust crates:
 
 3. **Random Matrix Generation**
 
-   Generates a random matrix of the specified rows and columns:
+   Generates a random matrix of the specified rows and columns sizes:
    ```rust
    pub fn randn_matrix(rows: usize, cols: usize) -> DMatrix<f64> {...}
    ```
 
 4. **Generation of Multiple Random Matrices**
 
-   Generates a list of random matrices of specified rows, columns, and number of simulations:
+   Generates a vector of random matrices of specified rows, columns, and number of simulations:
    ```rust
    pub fn randn_matrices(rows: usize, cols: usize, sims: usize) -> Vec<DMatrix<f64>> {...}
    ```
