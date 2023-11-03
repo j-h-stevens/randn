@@ -7,7 +7,7 @@ description = "A package to populate Nalgebra's vector, matrix and vector of mat
 repository = "https://github.com/j-h-stevens/randn"
 license = "MIT OR Apache-2.0"
 keywords = ["Nalgebra", "Random_Normal", "Vector", "Matrix", "Matrices"]
-categories = ["Data-sicence"]
+categories = ["Data_sicence"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

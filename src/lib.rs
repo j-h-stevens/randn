@@ -1,16 +1,19 @@
 #![doc = include_str!("../README.md")]
 
+use nalgebra::{DMatrix, DVector};
+use rand::{thread_rng, Rng};
 use rand_distr::StandardNormal;
-use rand::{Rng, thread_rng};
-use nalgebra::{DVector, DMatrix};
 use rayon::prelude::*;
 
 // Helper function to generate random data
 fn parallel_randn(size: usize) -> Vec<f64> {
-    (0..size).into_par_iter().map(|_| {
-        let mut rng = thread_rng();
-        rng.sample(&StandardNormal)
-    }).collect()
+    (0..size)
+        .into_par_iter()
+        .map(|_| {
+            let mut rng = thread_rng();
+            rng.sample(StandardNormal)
+        })
+        .collect()
 }
 
 /// Generates a random vector of the specified size:
@@ -25,7 +28,10 @@ pub fn randn_matrix(rows: usize, cols: usize) -> DMatrix<f64> {
 
 /// Generates a vector of random matrices of specified rows, columns, and number of simulations:
 pub fn randn_matrices(rows: usize, cols: usize, sims: usize) -> Vec<DMatrix<f64>> {
-    (0..sims).into_par_iter().map(|_| randn_matrix(rows, cols)).collect()
+    (0..sims)
+        .into_par_iter()
+        .map(|_| randn_matrix(rows, cols))
+        .collect()
 }
 
 #[cfg(test)]
@@ -37,7 +43,10 @@ mod tests {
     }
 
     fn variance(data: &DVector<f64>, mean: f64) -> f64 {
-        data.iter().map(|&value| (value - mean).powi(2)).sum::<f64>() / data.len() as f64
+        data.iter()
+            .map(|&value| (value - mean).powi(2))
+            .sum::<f64>()
+            / data.len() as f64
     }
 
     fn standard_deviation(data: &DVector<f64>, mean: f64) -> f64 {
