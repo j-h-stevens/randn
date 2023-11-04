@@ -7,7 +7,7 @@ description = "A package to populate ndarray's vector, matrix and vector of matr
 repository = "https://github.com/j-h-stevens/randn"
 license = "MIT OR Apache-2.0"
 keywords = ["ndarray", "Random_Normal", "Vector", "Matrix", "Matrices"]
-categories = ["Data_sicence"]
+categories = ["Data Science"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
