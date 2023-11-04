@@ -1,6 +1,6 @@
 [package]
 name = "randn"
-version = "0.1.1"
+version = "0.1.11"
 authors = ["John Stevens"]
 edition = "2021"
 description = "A package to populate ndarray's vector, matrix and vector of matrices with standard normal random variables in parallel."
