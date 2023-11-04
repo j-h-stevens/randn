@@ -1,9 +1,10 @@
 #![doc = include_str!("../README.md")]
 
-use nalgebra::{DMatrix, DVector};
+use ndarray::{Array1, Array2};
 use rand::{thread_rng, Rng};
 use rand_distr::StandardNormal;
-use rayon::prelude::*;
+use rayon::iter::ParallelIterator;
+use rayon::prelude::IntoParallelIterator;
 
 // Helper function to generate random data
 fn parallel_randn(size: usize) -> Vec<f64> {
@@ -17,17 +18,17 @@ fn parallel_randn(size: usize) -> Vec<f64> {
 }
 
 /// Generates a random vector of the specified size:
-pub fn randn_vector(size: usize) -> DVector<f64> {
-    DVector::from_column_slice(&parallel_randn(size))
+pub fn randn_vector(size: usize) -> Array1<f64> {
+    Array1::from_vec(parallel_randn(size))
 }
 
 /// Generates a random matrix of the specified rows and columns sizes:
-pub fn randn_matrix(rows: usize, cols: usize) -> DMatrix<f64> {
-    DMatrix::from_row_slice(rows, cols, &parallel_randn(rows * cols))
+pub fn randn_matrix(rows: usize, cols: usize) -> Array2<f64> {
+    Array2::from_shape_vec((rows, cols), parallel_randn(rows * cols)).unwrap()
 }
 
 /// Generates a vector of random matrices of specified rows, columns, and number of simulations:
-pub fn randn_matrices(rows: usize, cols: usize, sims: usize) -> Vec<DMatrix<f64>> {
+pub fn randn_matrices(rows: usize, cols: usize, sims: usize) -> Vec<Array2<f64>> {
     (0..sims)
         .into_par_iter()
         .map(|_| randn_matrix(rows, cols))
@@ -38,18 +39,18 @@ pub fn randn_matrices(rows: usize, cols: usize, sims: usize) -> Vec<DMatrix<f64>
 mod tests {
     use super::*;
 
-    fn mean(data: &DVector<f64>) -> f64 {
+    fn mean(data: &Array1<f64>) -> f64 {
         data.sum() / data.len() as f64
     }
 
-    fn variance(data: &DVector<f64>, mean: f64) -> f64 {
+    fn variance(data: &Array1<f64>, mean: f64) -> f64 {
         data.iter()
             .map(|&value| (value - mean).powi(2))
             .sum::<f64>()
             / data.len() as f64
     }
 
-    fn standard_deviation(data: &DVector<f64>, mean: f64) -> f64 {
+    fn standard_deviation(data: &Array1<f64>, mean: f64) -> f64 {
         variance(data, mean).sqrt()
     }
 
@@ -80,10 +81,10 @@ mod tests {
     fn test_matrix_statistics() {
         let (rows, cols): (usize, usize) = (50, 1000);
         let mat = randn_matrix(rows, cols);
-        let data = mat.as_slice();
+        let data = mat.as_slice().unwrap();
 
-        let mean_value = mean(&DVector::from_vec(data.to_vec()));
-        let std_dev = standard_deviation(&DVector::from_vec(data.to_vec()), mean_value);
+        let mean_value = mean(&Array1::from(data.to_vec()));
+        let std_dev = standard_deviation(&Array1::from(data.to_vec()), mean_value);
         let epsilon = 0.01;
 
         // Assert that the mean and standard deviation are approximately 0 and 1 respectively.
