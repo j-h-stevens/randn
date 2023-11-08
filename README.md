@@ -7,7 +7,7 @@ The Randn Rust library provides utilities for generating random vectors, matrice
 
 This library is built upon a set of Rust crates:
 - `rand` and `rand_distr` for random number generation.
-- `ndarray` for array operations and representations. (Switched from `nalgebra`)
+- `nalgebra` for array operations and representations. (Switched from `ndarray`)
 - `rayon` for parallel computing capabilities.
 
 ## Features

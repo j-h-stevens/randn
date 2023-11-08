@@ -1,34 +1,36 @@
 #![doc = include_str!("../README.md")]
 
-use ndarray::{Array1, Array2};
+extern crate nalgebra as na;
+extern crate rand;
+extern crate rand_distr;
+extern crate rayon;
+
+use nalgebra::{DMatrix, DVector};
 use rand::{thread_rng, Rng};
 use rand_distr::StandardNormal;
-use rayon::iter::ParallelIterator;
-use rayon::prelude::IntoParallelIterator;
+use rayon::prelude::*;
 
-// Helper function to generate random data
+// Helper function to generate random data in parallel
 fn parallel_randn(size: usize) -> Vec<f64> {
     (0..size)
         .into_par_iter()
-        .map(|_| {
-            let mut rng = thread_rng();
-            rng.sample(StandardNormal)
-        })
+        .map_init(thread_rng, |rng, _| rng.sample(StandardNormal))
         .collect()
 }
 
-/// Generates a random vector of the specified size:
-pub fn randn_vector(size: usize) -> Array1<f64> {
-    Array1::from_vec(parallel_randn(size))
+/// Generates a random vector of the specified size in parallel:
+pub fn randn_vector(size: usize) -> DVector<f64> {
+    DVector::from_vec(parallel_randn(size))
 }
 
-/// Generates a random matrix of the specified rows and columns sizes:
-pub fn randn_matrix(rows: usize, cols: usize) -> Array2<f64> {
-    Array2::from_shape_vec((rows, cols), parallel_randn(rows * cols)).unwrap()
+/// Generates a random matrix of the specified rows and columns sizes in parallel:
+pub fn randn_matrix(rows: usize, cols: usize) -> DMatrix<f64> {
+    let size = rows * cols;
+    DMatrix::from_vec(cols, rows, parallel_randn(size))
 }
 
 /// Generates a vector of random matrices of specified rows, columns, and number of simulations:
-pub fn randn_matrices(rows: usize, cols: usize, sims: usize) -> Vec<Array2<f64>> {
+pub fn randn_matrices(rows: usize, cols: usize, sims: usize) -> Vec<DMatrix<f64>> {
     (0..sims)
         .into_par_iter()
         .map(|_| randn_matrix(rows, cols))
@@ -38,19 +40,21 @@ pub fn randn_matrices(rows: usize, cols: usize, sims: usize) -> Vec<Array2<f64>>
 #[cfg(test)]
 mod tests {
     use super::*;
+    use na::DVector;
 
-    fn mean(data: &Array1<f64>) -> f64 {
-        data.sum() / data.len() as f64
+    // Statistical functions adapted for `nalgebra`'s `DVector`
+    fn mean(data: &DVector<f64>) -> f64 {
+        data.iter().sum::<f64>() / data.len() as f64
     }
 
-    fn variance(data: &Array1<f64>, mean: f64) -> f64 {
+    fn variance(data: &DVector<f64>, mean: f64) -> f64 {
         data.iter()
             .map(|&value| (value - mean).powi(2))
             .sum::<f64>()
             / data.len() as f64
     }
 
-    fn standard_deviation(data: &Array1<f64>, mean: f64) -> f64 {
+    fn standard_deviation(data: &DVector<f64>, mean: f64) -> f64 {
         variance(data, mean).sqrt()
     }
 
@@ -60,8 +64,7 @@ mod tests {
         let vec = randn_vector(size);
 
         let mean_value = mean(&vec);
-        let variance = variance(&vec, mean_value);
-        let std_dev = variance.sqrt();
+        let std_dev = standard_deviation(&vec, mean_value);
         let epsilon = 0.01;
 
         // Assert that the mean and standard deviation are approximately 0 and 1 respectively.
@@ -81,10 +84,10 @@ mod tests {
     fn test_matrix_statistics() {
         let (rows, cols): (usize, usize) = (50, 1000);
         let mat = randn_matrix(rows, cols);
-        let data = mat.as_slice().unwrap();
+        let data = DVector::from_iterator(rows * cols, mat.iter().cloned());
 
-        let mean_value = mean(&Array1::from(data.to_vec()));
-        let std_dev = standard_deviation(&Array1::from(data.to_vec()), mean_value);
+        let mean_value = mean(&data);
+        let std_dev = standard_deviation(&data, mean_value);
         let epsilon = 0.01;
 
         // Assert that the mean and standard deviation are approximately 0 and 1 respectively.

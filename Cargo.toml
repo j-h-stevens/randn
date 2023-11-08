@@ -3,17 +3,16 @@ name = "randn"
 version = "0.1.11"
 authors = ["John Stevens"]
 edition = "2021"
-description = "A package to populate ndarray's vector, matrix and vector of matrices with standard normal random variables in parallel."
+description = "A package to populate nalgebra's vector, matrix and vector of matrices with standard normal random variables in parallel."
 repository = "https://github.com/j-h-stevens/randn"
 license = "MIT OR Apache-2.0"
-keywords = ["ndarray", "Random_Normal", "Vector", "Matrix", "Matrices"]
-categories = ["Data Science"]
+keywords = ["nalgebra", "Random_Normal", "Vector", "Matrix", "Matrices"]
+categories = ["Finance"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-ndarray = "0.15"
-ndarray-parallel = "0.9.1"
+nalgebra = "0.32.3"
 rand = "0.8"
 rand_distr = "0.4"
 rayon = "1.8"
