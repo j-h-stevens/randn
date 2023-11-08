@@ -1,6 +1,6 @@
 [package]
 name = "randn"
-version = "0.1.11"
+version = "0.1.12"
 authors = ["John Stevens"]
 edition = "2021"
 description = "A package to populate nalgebra's vector, matrix and vector of matrices with standard normal random variables in parallel."
